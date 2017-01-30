@@ -1,0 +1,26 @@
+{% extends "tienda/base.html" %}
+{% load static %}
+
+{% block title %}
+{% if categoria %}{{ categoria.nombre }}{% else %}Productos{% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="product-detail">
+    <img src="{% if producto.imagen %}{{ producto.imagen.url }}{% else %}
+{% static "img/no_image.png" %}{% endif %}">
+    <h1>{{ producto.nombre }}</h1>
+    <h2><a href="{{ producto.categoria.get_absolute_url }}">{{ producto.categoria }}</a></h2>
+    <p class="price">{{ producto.precio }}€</p>
+    {%if user.is_authenticated %}
+    <form action="{% url "carro:agregar_a_carro" producto.id %}" method = "post">
+      {{cart_product_form}}
+      {% csrf_token%}
+      <input type = "submit" value ="Agregar a carrito">
+    </form>
+    {%else%}
+    <a href="{%url "usuarios:login"%}"><button type="submit">Inicie Sesión</button></a>
+    {%endif%}
+{{ producto.descripcion|linebreaks }}
+</div>
+{% endblock %}

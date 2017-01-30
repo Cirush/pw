@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>{% block title %}Juamazon{% endblock %}</title>
+<link href="{% static "css/base.css" %}" rel="stylesheet">
+</head>
+<body>
+<div id="header">
+<a href="/" class="logo">Juamazon</a>
+</div>
+<div id="subheader">
+
+<div class="cart">
+  {%if user.is_authenticated %}
+    {% with total_items=carro|length %}
+      {% if carro|length > 0 %}
+        <a href="{% url 'usuarios:perfil' %}">{{ user.first_name }}</a>, su carrito:
+        <a href="{% url "carro:detalle_carro" %}">
+          {{ total_items }} Producto{{ total_items|pluralize }},
+          {{ carro.get_precio_total }}€
+        </a> |
+      {% else %}
+        <a href="{% url 'usuarios:perfil' %}">{{ user.first_name}}</a>, su carrito está vacío. |
+      {% endif %}
+    {% endwith %}
+  {%endif%}
+  {%if not user.is_authenticated %}
+      <a href={%url "usuarios:login"%}>Iniciar sesión</a> |
+      <a href={%url "usuarios:registro"%}>Registrar</a>
+  {%else%}
+      <a href={%url "usuarios:logout"%}>Cerrar sesión</a>
+  {%endif%}
+</div>
+</div>
+<div id="content">
+{% block content %}
+{% endblock %}
+</div>
+</body>
+</html>

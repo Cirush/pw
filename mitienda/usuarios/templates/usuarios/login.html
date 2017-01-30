@@ -1,0 +1,21 @@
+{% extends "tienda/base.html" %}
+{% block title %}
+  Iniciar Sesion
+{% endblock %}
+
+{% block content %}
+      <table class="cart">
+        <thead><tr><th>Inicie Sesión</th></tr></thead>
+          <tbody><tr>
+            <td><form method="POST">
+                {% csrf_token %}
+                <table class ="cart" align="center" style="text-align: center;font-size: 20px;">
+                    {{ formulario }}
+
+                <br></td>
+            <td><button type="submit" class="btn btn-success">Iniciar Sesión</button></td>
+                </table>
+            </form>
+          </tr></tbody>
+      </table>
+{% endblock %}

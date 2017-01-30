@@ -1,0 +1,32 @@
+{% extends "tienda/base.html" %}
+
+{% block title %}
+  Realizar pedido
+{% endblock %}
+
+{% block content %}
+  <h1>Realizar pedido</h1>
+  <div class="order-info">
+    <h3>Su pedido</h3>
+    <ul>
+      {% for item in carro %}
+      <li>
+        {{ item.cantidad }}x {{ item.producto.nombre }}
+        <span>{{ item.precio_total }}€</span>
+      </li>
+      {% endfor %}
+      {%if carro.cupon%}
+        <li>
+          "{{carro.cupon.codigo}}" ({{carro.cupon.descuento}}% descuento)
+          <span>- {{carro.get_descuento|floatformat:"2"}}€ </span>
+        </li>
+      {%endif%}
+    </ul>
+    <p>Total: {{ carro.get_precio_total_descontado|floatformat:"2" }}€</p>
+  </div>
+  <form action="." method="post" class="order-form">
+    {{ form.as_p }}
+    <p><input type="submit" value="Pagar"></p>
+    {% csrf_token %}
+  </form>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "tienda/base.html" %}
+{% load static %}
+
+{% block title %}
+  Su carrito de compra.
+{% endblock %}
+
+{% block content %}
+<h1>Su carrito de compra</h1>
+<table class="cart">
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Eliminar</th>
+      <th>Precio Unidad</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in carro %}
+      {% with producto=item.producto %}
+        <tr>
+          <td>
+            <a href="{{ producto.get_absolute_url }}">
+              <img src="{% if producto.imagen %}{{ producto.imagen.url}}{% else %}{% static "img/no_image.png" %}{% endif %}">
+            </a>
+          </td>
+          <td>{{ producto.nombre }}</td>
+          <td>
+              <form action ="{%url "carro:agregar_a_carro" producto.id%}" method = "post">
+                {{item.update_quantity_form.cantidad}}
+                {{item.update_quantity_form.actualizar}}
+                <input type="submit" value = "Actualizar">
+                {% csrf_token %}
+              </form>
+          </td>
+          <td><a href="{% url "carro:eliminar_de_carro" producto.id%}">Eliminar</a></td>
+          <td class="num">{{ item.precio }}€</td>
+          <td class="num">{{ item.precio_total }}€</td>
+        </tr>
+      {% endwith %}
+    {% endfor %}
+
+    {% if carro.cupon %}
+        <tr class="subtotal">
+            <td>Subtotal</td>
+            <td colspan="4"></td>
+            <td class="num">${{ carro.get_precio_total }}</td>
+        </tr>
+        <tr>
+            <td>Cupon "{{ carro.cupon.codigo }}"({{ carro.cupon.descuento }}% descuento)</td>
+            <td colspan="4"></td>
+            <td class="num neg">- {{ carro.get_descuento|floatformat:"2" }}€</td>
+        </tr>
+    {% endif %}
+    <tr class="total">
+        <td>Total</td>
+        <td colspan="4"></td>
+        <td class="num">{{ carro.get_precio_total_descontado|floatformat:"2" }}€</td>
+    </tr>
+
+  </tbody>
+</table>
+  <p> Aplicar un cupón de descuento </p>
+  <form action = "{% url "cupones:aplicar" %}" method = "post">
+    {{coupon_apply_form}}
+    <input type = "submit" value = "Aplicar">
+    {% csrf_token %}
+  </form>
+  <p class="text-right">
+    <a href="{% url "tienda:listar_producto" %}" class="buttonlight">Continúe comprando</a>
+    <a href="{% url "pedidos:crear_pedido" %}" class="button">Realizar pedido</a>
+  </p>
+{% endblock %}
